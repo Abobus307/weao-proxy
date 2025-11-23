@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatExpsAre.Online - Modern Redesign</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-light: #8a84ff;
+            --primary-dark: #4d46b8;
+            --secondary: #ff6b9d;
+            --accent: #00e5ff;
+            --background: #f5f7ff;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --text: #2d2b55;
+            --text-light: #6d6a9e;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass-border: rgba(108, 99, 255, 0.2);
+            --shadow: 0 8px 32px rgba(108, 99, 255, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --background: #0f0f23;
+            --card-bg: rgba(30, 30, 60, 0.7);
+            --text: #e2e2f5;
+            --text-light: #a0a0c0;
+            --glass-border: rgba(108, 99, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            transition: var(--transition);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 107, 157, 0.05) 0%, transparent 20%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--primary-dark), var(--secondary));
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(15, 15, 35, 0.8);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo span:first-child {
+            color: var(--primary);
+        }
+
+        .logo span:last-child {
+            color: var(--secondary);
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        nav a:hover:before {
+            left: 100%;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(108, 99, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Controls */
+        .controls {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .filter-btn:hover {
+            background: rgba(108, 99, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Exploits Grid */
+        .exploits-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .exploits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .exploit-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exploit-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+
+        .exploit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(108, 99, 255, 0.2);
+        }
+
+        .exploit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .exploit-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .exploit-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-online {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online .status-dot {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-warning .status-dot {
+            background: var(--warning);
+        }
+
+        .status-offline .status-dot {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .exploit-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .exploit-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: var(--text-light);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .stability-bar {
+            height: 6px;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .stability-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .stability-high {
+            background: linear-gradient(to right, var(--success), #22c55e);
+        }
+
+        .stability-medium {
+            background: linear-gradient(to right, var(--warning), #f59e0b);
+        }
+
+        .stability-low {
+            background: linear-gradient(to right, var(--danger), #ef4444);
+        }
+
+        .exploit-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 8px;
+            border: none;
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 107, 157, 0.1);
+            color: var(--secondary);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            margin-top: 4rem;
+            padding: 3rem 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .footer-section p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            transform: scale(0.9);
+            opacity: 0;
+            animation: modalAppear 0.3s forwards;
+        }
+
+        @keyframes modalAppear {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1500;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .notification-success .notification-icon {
+            background: var(--success);
+        }
+
+        .notification-warning .notification-icon {
+            background: var(--warning);
+        }
+
+        .notification-error .notification-icon {
+            background: var(--danger);
+        }
+
+        .notification-info .notification-icon {
+            background: var(--primary);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--glass-border);
+                padding: 1rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            nav a {
+                display: block;
+                padding: 0.8rem 1rem;
+                border-radius: 8px;
+            }
+            
+            .hero {
+                padding: 3rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .filter-controls {
+                justify-content: center;
+            }
+            
+            .exploits-section {
+                padding: 0 1rem;
+            }
+            
+            .exploits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* 3D Effects and Animations */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .parallax-element {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light), transparent);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -50px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .floating-card {
+            animation: floatCard 6s ease-in-out infinite;
+        }
+
+        @keyframes floatCard {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .gradient-border {
+            position: relative;
+            border-radius: 15px;
+            padding: 1px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+            background-size: 400% 400%;
+            animation: gradientBorder 3s ease infinite;
+        }
+
+        @keyframes gradientBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .gradient-border > div {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Parallax Background Elements -->
+    <div class="parallax-bg">
+        <div class="parallax-element" style="width: 300px; height: 300px; top: 10%; left: 5%;"></div>
+        <div class="parallax-element" style="width: 200px; height: 200px; top: 60%; left: 80%;"></div>
+        <div class="parallax-element" style="width: 150px; height: 150px; top: 30%; left: 70%;"></div>
+        <div class="parallax-element" style="width: 250px; height: 250px; top: 70%; left: 10%;"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-bolt logo-icon"></i>
+                <span>What</span><span>ExpsAre.</span><span>Online</span>
+            </a>
+            
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-list"></i> Exploits</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Status</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> API Docs</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>#1 Roblox Exploit Status Tracker</h1>
+        <p>Real-time monitoring of all major Roblox script executors with detailed analytics, stability ratings, and instant status updates.</p>
+        
+        <div class="hero-stats">
+            <div class="stat-card floating-card">
+                <div class="stat-value" id="online-count">24</div>
+                <div class="stat-label">Online Exploits</div>
+            </div>
+            <div class="stat-card floating-card">
+                <div class="stat-value" id="total-count">32</div>
+                <div class="stat-label">Total Tracked</div>
+            </div>
+            <div class="stat-card floating-card">
+                <div class="stat-value" id="uptime-percent">98.7%</div>
+                <div class="stat-label">Average Uptime</div>
+            </div>
+            <div class="stat-card floating-card">
+                <div class="stat-value" id="update-time">12s</div>
+                <div class="stat-label">Last Update</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Search exploits...">
+        </div>
+        
+        <div class="filter-controls">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-layer-group"></i> All
+            </button>
+            <button class="filter-btn" data-filter="windows">
+                <i class="fab fa-windows"></i> Windows
+            </button>
+            <button class="filter-btn" data-filter="mac">
+                <i class="fab fa-apple"></i> Mac
+            </button>
+            <button class="filter-btn" data-filter="android">
+                <i class="fab fa-android"></i> Android
+            </button>
+            <button class="filter-btn" data-filter="online">
+                <i class="fas fa-circle"></i> Online
+            </button>
+        </div>
+    </div>
+
+    <!-- Exploits Sections -->
+    <main>
+        <section class="exploits-section">
+            <h2 class="section-title">Windows Script Executor Exploits</h2>
+            <div class="exploits-grid" id="windows-exploits">
+                <!-- Windows exploits will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="exploits-section">
+            <h2 class="section-title">Mac Script Executor Exploits</h2>
+            <div class="exploits-grid" id="mac-exploits">
+                <!-- Mac exploits will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="exploits-section">
+            <h2 class="section-title">Android Script Executor Exploits</h2>
+            <div class="exploits-grid" id="android-exploits">
+                <!-- Android exploits will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>WhatExpsAre.Online</h3>
+                <p>The #1 Roblox exploit status tracker with real-time updates, detailed analytics, and comprehensive monitoring.</p>
+                <p>A recreation of BabyHamsta's WhatExploitsAre.Online with modern design and enhanced functionality.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Site</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-list"></i> Exploits</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Status</a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> API Docs</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                    <li><a href="#"><i class="fas fa-cookie"></i> Cookie Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fab fa-discord"></i> Discord</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div>© 2023-2025 <span style="color: var(--primary);">Vienna Softworks</span>. All rights reserved.</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-discord"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="exploit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-exploit-name">Exploit Name</h3>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="exploit-detail">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value" id="modal-status">Online</span>
+                </div>
+                <div class="exploit-detail">
+                    <span class="detail-label">Platform:</span>
+                    <span class="detail-value" id="modal-platform">Windows</span>
+                </div>
+                <div class="exploit-detail">
+                    <span class="detail-label">Version:</span>
+                    <span class="detail-value" id="modal-version">v2.7.3</span>
+                </div>
+                <div class="exploit-detail">
+                    <span class="detail-label">Last Updated:</span>
+                    <span class="detail-value" id="modal-updated">2 minutes ago</span>
+                </div>
+                <div class="exploit-detail">
+                    <span class="detail-label">Stability:</span>
+                    <span class="detail-value" id="modal-stability">High</span>
+                </div>
+                <div class="stability-bar">
+                    <div class="stability-fill stability-high" id="modal-stability-bar" style="width: 90%"></div>
+                </div>
+                <div class="exploit-detail">
+                    <span class="detail-label">Description:</span>
+                    <span class="detail-value" id="modal-description">A powerful script executor with advanced features and high stability.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" id="modal-website">
+                    <i class="fas fa-external-link-alt"></i> Website
+                </button>
+                <button class="action-btn" id="modal-download">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notification-title">Status Update</div>
+            <div class="notification-message" id="notification-message">Exploit status has been updated</div>
+        </div>
+        <button class="notification-close" id="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            
+            // Update icon
+            const icon = themeToggle.querySelector('i');
+            icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+        });
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+        const icon = themeToggle.querySelector('i');
+        icon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            const menuIcon = mobileMenuBtn.querySelector('i');
+            menuIcon.className = mainNav.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
+        });
+        
+        // Sample Exploit Data
+        const exploits = [
+            {
+                id: 1,
+                name: "Synapse X",
+                platform: "windows",
+                status: "online",
+                version: "v3.0.2",
+                lastUpdate: "1 minute ago",
+                stability: 95,
+                description: "The most powerful and reliable script executor for Roblox.",
+                website: "https://synapse.to",
+                download: "https://synapse.to/download"
+            },
+            {
+                id: 2,
+                name: "Script-Ware",
+                platform: "windows",
+                status: "online",
+                version: "v2.6.1",
+                lastUpdate: "3 minutes ago",
+                stability: 88,
+                description: "Feature-rich executor with a modern interface.",
+                website: "https://script-ware.com",
+                download: "https://script-ware.com/download"
+            },
+            {
+                id: 3,
+                name: "Krnl",
+                platform: "windows",
+                status: "warning",
+                version: "v1.0.5",
+                lastUpdate: "5 minutes ago",
+                stability: 75,
+                description: "Free executor with good functionality.",
+                website: "https://krnl.place",
+                download: "https://krnl.place/download"
+            },
+            {
+                id: 4,
+                name: "Fluxus",
+                platform: "windows",
+                status: "offline",
+                version: "v4.2.0",
+                lastUpdate: "10 minutes ago",
+                stability: 60,
+                description: "Popular free executor with regular updates.",
+                website: "https://fluxteam.net",
+                download: "https://fluxteam.net/download"
+            },
+            {
+                id: 5,
+                name: "Electron",
+                platform: "mac",
+                status: "online",
+                version: "v2.1.0",
+                lastUpdate: "2 minutes ago",
+                stability: 85,
+                description: "Mac-compatible executor with good performance.",
+                website: "https://electronexec.com",
+                download: "https://electronexec.com/download"
+            },
+            {
+                id: 6,
+                name: "MacSploit",
+                platform: "mac",
+                status: "warning",
+                version: "v1.3.2",
+                lastUpdate: "7 minutes ago",
+                stability: 70,
+                description: "Lightweight executor for macOS.",
+                website: "https://macsploit.com",
+                download: "https://macsploit.com/download"
+            },
+            {
+                id: 7,
+                name: "Arceus X",
+                platform: "android",
+                status: "online",
+                version: "v3.1.0",
+                lastUpdate: "1 minute ago",
+                stability: 90,
+                description: "Popular Android executor with great features.",
+                website: "https://arceusx.com",
+                download: "https://arceusx.com/download"
+            },
+            {
+                id: 8,
+                name: "Hydrogen",
+                platform: "android",
+                status: "online",
+                version: "v2.5.1",
+                lastUpdate: "4 minutes ago",
+                stability: 80,
+                description: "Android executor with regular updates.",
+                website: "https://hydroexec.com",
+                download: "https://hydroexec.com/download"
+            }
+        ];
+        
+        // Render Exploits
+        function renderExploits() {
+            const windowsGrid = document.getElementById('windows-exploits');
+            const macGrid = document.getElementById('mac-exploits');
+            const androidGrid = document.getElementById('android-exploits');
+            
+            windowsGrid.innerHTML = '';
+            macGrid.innerHTML = '';
+            androidGrid.innerHTML = '';
+            
+            let onlineCount = 0;
+            let totalCount = exploits.length;
+            
+            exploits.forEach(exploit => {
+                if (exploit.status === 'online') onlineCount++;
+                
+                const exploitCard = document.createElement('div');
+                exploitCard.className = 'exploit-card floating-card';
+                exploitCard.setAttribute('data-platform', exploit.platform);
+                exploitCard.setAttribute('data-status', exploit.status);
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                switch(exploit.status) {
+                    case 'online':
+                        statusClass = 'status-online';
+                        statusText = 'Online';
+                        break;
+                    case 'warning':
+                        statusClass = 'status-warning';
+                        statusText = 'Unstable';
+                        break;
+                    case 'offline':
+                        statusClass = 'status-offline';
+                        statusText = 'Offline';
+                        break;
+                }
+                
+                let stabilityClass = '';
+                if (exploit.stability >= 80) {
+                    stabilityClass = 'stability-high';
+                } else if (exploit.stability >= 60) {
+                    stabilityClass = 'stability-medium';
+                } else {
+                    stabilityClass = 'stability-low';
+                }
+                
+                exploitCard.innerHTML = `
+                    <div class="exploit-header">
+                        <h3 class="exploit-name">${exploit.name}</h3>
+                        <div class="exploit-status ${statusClass}">
+                            <span class="status-dot"></span>
+                            ${statusText}
+                        </div>
+                    </div>
+                    <div class="exploit-details">
+                        <div class="exploit-detail">
+                            <span class="detail-label">Platform:</span>
+                            <span class="detail-value">${exploit.platform.charAt(0).toUpperCase() + exploit.platform.slice(1)}</span>
+                        </div>
+                        <div class="exploit-detail">
+                            <span class="detail-label">Version:</span>
+                            <span class="detail-value">${exploit.version}</span>
+                        </div>
+                        <div class="exploit-detail">
+                            <span class="detail-label">Last Update:</span>
+                            <span class="detail-value">${exploit.lastUpdate}</span>
+                        </div>
+                        <div class="exploit-detail">
+                            <span class="detail-label">Stability:</span>
+                            <span class="detail-value">${exploit.stability}%</span>
+                        </div>
+                    </div>
+                    <div class="stability-bar">
+                        <div class="stability-fill ${stabilityClass}" style="width: ${exploit.stability}%"></div>
+                    </div>
+                    <div class="exploit-actions">
+                        <button class="action-btn" data-action="details" data-id="${exploit.id}">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                        <button class="action-btn secondary" data-action="website" data-id="${exploit.id}">
+                            <i class="fas fa-external-link-alt"></i> Website
+                        </button>
+                    </div>
+                `;
+                
+                if (exploit.platform === 'windows') {
+                    windowsGrid.appendChild(exploitCard);
+                } else if (exploit.platform === 'mac') {
+                    macGrid.appendChild(exploitCard);
+                } else if (exploit.platform === 'android') {
+                    androidGrid.appendChild(exploitCard);
+                }
+            });
+            
+            // Update stats
+            document.getElementById('online-count').textContent = onlineCount;
+            document.getElementById('total-count').textContent = totalCount;
+            document.getElementById('uptime-percent').textContent = `${Math.round((onlineCount / totalCount) * 100)}%`;
+        }
+        
+        // Filter Exploits
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                const filter = button.getAttribute('data-filter');
+                const allCards = document.querySelectorAll('.exploit-card');
+                
+                allCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        const platform = card.getAttribute('data-platform');
+                        const status = card.getAttribute('data-status');
+                        
+                        if (filter === platform || filter === status) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Search Functionality
+        const searchInput = document.getElementById('search-input');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const allCards = document.querySelectorAll('.exploit-card');
+            
+            allCards.forEach(card => {
+                const exploitName = card.querySelector('.exploit-name').textContent.toLowerCase();
+                
+                if (exploitName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Modal Functionality
+        const modal = document.getElementById('exploit-modal');
+        const modalClose = document.getElementById('modal-close');
+        const modalWebsite = document.getElementById('modal-website');
+        const modalDownload = document.getElementById('modal-download');
+        
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('[data-action="details"]')) {
+                const button = e.target.closest('[data-action="details"]');
+                const exploitId = parseInt(button.getAttribute('data-id'));
+                const exploit = exploits.find(e => e.id === exploitId);
+                
+                if (exploit) {
+                    // Update modal content
+                    document.getElementById('modal-exploit-name').textContent = exploit.name;
+                    
+                    let statusText = '';
+                    switch(exploit.status) {
+                        case 'online':
+                            statusText = 'Online';
+                            break;
+                        case 'warning':
+                            statusText = 'Unstable';
+                            break;
+                        case 'offline':
+                            statusText = 'Offline';
+                            break;
+                    }
+                    
+                    document.getElementById('modal-status').textContent = statusText;
+                    document.getElementById('modal-platform').textContent = exploit.platform.charAt(0).toUpperCase() + exploit.platform.slice(1);
+                    document.getElementById('modal-version').textContent = exploit.version;
+                    document.getElementById('modal-updated').textContent = exploit.lastUpdate;
+                    document.getElementById('modal-stability').textContent = `${exploit.stability}%`;
+                    document.getElementById('modal-stability-bar').style.width = `${exploit.stability}%`;
+                    document.getElementById('modal-description').textContent = exploit.description;
+                    
+                    // Update button URLs
+                    modalWebsite.onclick = () => window.open(exploit.website, '_blank');
+                    modalDownload.onclick = () => window.open(exploit.download, '_blank');
+                    
+                    // Show modal
+                    modal.classList.add('active');
+                }
+            }
+        });
+        
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+        
+        // Notification Functionality
+        const notification = document.getElementById('notification');
+        const notificationClose = document.getElementById('notification-close');
+        
+        notificationClose.addEventListener('click', () => {
+            notification.classList.remove('active');
+        });
+        
+        function showNotification(title, message, type = 'info') {
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            
+            // Set notification type
+            notification.className = 'notification';
+            notification.classList.add(`notification-${type}`);
+            
+            // Show notification
+            notification.classList.add('active');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 5000);
+        }
+        
+        // Simulate Real-time Updates
+        function simulateUpdates() {
+            // Randomly change status of some exploits
+            const randomIndex = Math.floor(Math.random() * exploits.length);
+            const exploit = exploits[randomIndex];
+            
+            const oldStatus = exploit.status;
+            const statuses = ['online', 'warning', 'offline'];
+            let newStatus;
+            
+            do {
+                newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            } while (newStatus === oldStatus);
+            
+            exploit.status = newStatus;
+            exploit.lastUpdate = 'Just now';
+            
+            // Update display
+            renderExploits();
+            
+            // Show notification
+            showNotification(
+                'Status Update', 
+                `${exploit.name} is now ${newStatus === 'online' ? 'online' : newStatus === 'warning' ? 'unstable' : 'offline'}`,
+                newStatus === 'online' ? 'success' : newStatus === 'warning' ? 'warning' : 'error'
+            );
+            
+            // Update last update time
+            document.getElementById('update-time').textContent = '0s';
+            
+            // Schedule next update
+            const nextUpdate = Math.floor(Math.random() * 30000) + 15000; // 15-45 seconds
+            setTimeout(simulateUpdates, nextUpdate);
+        }
+        
+        // Update timer
+        function updateTimer() {
+            const updateTimeElement = document.getElementById('update-time');
+            let seconds = parseInt(updateTimeElement.textContent);
+            
+            if (isNaN(seconds)) seconds = 0;
+            
+            seconds++;
+            updateTimeElement.textContent = `${seconds}s`;
+        }
+        
+        // Initialize
+        renderExploits();
+        
+        // Start simulations
+        setTimeout(simulateUpdates, 10000); // First update after 10 seconds
+        setInterval(updateTimer, 1000); // Update timer every second
+        
+        // Add some initial notifications
+        setTimeout(() => {
+            showNotification('Welcome!', 'Real-time status tracking is now active.', 'info');
+        }, 2000);
+    </script>
+</body>
+</html>
