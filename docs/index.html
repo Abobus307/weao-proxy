@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHIIP-SEEK Content Parser</title>
+    <title>Web Content Extractor - CHIIP-SEEK</title>
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .light-mode {
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,488 +31,876 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: all 0.3s ease;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 20px;
-        }
-
-        .title {
-            font-size: 3rem;
-            background: linear-gradient(45deg, #00ff88, #00ccff, #bb00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-        }
-
-        .subtitle {
-            color: #8899aa;
-            font-size: 1.2rem;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
             margin-bottom: 30px;
+            padding: 20px;
+            background: var(--surface-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.5rem;
         }
 
-        .input-section, .output-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        .input-section {
+            background: var(--surface-color);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #00ff88;
-            font-weight: 600;
+        .url-input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         .url-input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00ff88;
-            border-radius: 10px;
-            color: #ffffff;
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--background-color);
+            color: var(--text-color);
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease;
         }
 
         .url-input:focus {
             outline: none;
-            border-color: #00ccff;
-            box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
-        }
-
-        .proxy-section {
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .proxy-select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #00ccff;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 14px;
+            border-color: var(--primary-color);
         }
 
         .btn {
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            color: #000;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.4);
+            background: var(--secondary-color);
+            transform: translateY(-1px);
         }
 
-        .btn:active {
-            transform: translateY(0);
+        .btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .stats {
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0 12px 12px 12px;
+            padding: 25px;
+            min-height: 400px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-area {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--background-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
-        .stat-item {
-            background: rgba(0, 0, 0, 0.2);
+        .stat-card {
+            background: var(--background-color);
             padding: 15px;
             border-radius: 8px;
+            border: 1px solid var(--border-color);
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #00ff88;
+            color: var(--primary-color);
         }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: #8899aa;
-        }
-
-        .result-area {
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00ccff;
-            border-radius: 10px;
-            padding: 20px;
-            color: #e0e0e0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            max-height: 600px;
-            overflow-y: auto;
-            min-height: 200px;
-        }
-
-        .result-area.success {
-            border-color: #00ff88;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-        }
-
-        .result-area.error {
-            border-color: #ff4444;
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.2);
-            color: #ff8888;
-        }
-
-        .result-area.loading {
-            border-color: #00ccff;
-            text-align: center;
-            color: #00ccff;
-        }
-
-        .features {
+        .image-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 10px;
-            padding: 20px;
+        .image-item {
+            background: var(--background-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
             text-align: center;
         }
 
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .feature-title {
-            color: #00ff88;
-            margin-bottom: 10px;
-        }
-
-        .loading-dots {
-            display: inline-block;
-        }
-
-        .loading-dots::after {
-            content: '';
-            animation: dots 1.5s steps(5, end) infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-            80%, 100% { content: ''; }
-        }
-
-        .result-area::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .result-area::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+        .image-item img {
+            max-width: 100%;
+            height: auto;
             border-radius: 4px;
         }
 
-        .result-area::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            border-radius: 4px;
+        .link-list {
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #8899aa;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .link-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            word-break: break-all;
+        }
+
+        .link-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-section {
+            margin-top: 25px;
+        }
+
+        .history-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: var(--success-color);
+        }
+
+        .copy-btn {
+            background: var(--warning-color);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--success-color);
+            color: white;
+            border-radius: 8px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .url-input-container {
+                flex-direction: column;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-radius: 8px;
+                margin-bottom: 5px;
+            }
+            
+            .tab-content {
+                border-radius: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        
         <div class="header">
-            <h1 class="title">CHIIP-SEEK CONTENT PARSER</h1>
-            <p class="subtitle">Extract content from any website with CORS bypass</p>
+            <h1>🌐 Web Content Extractor</h1>
+            <p>Извлечение и анализ содержимого веб-страниц</p>
         </div>
 
-        <div class="main-content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label class="input-label">Website URL:</label>
-                    <input type="url" class="url-input" id="urlInput" placeholder="https://example.com" autocomplete="off">
-                </div>
-
-                <div class="proxy-section">
-                    <label class="input-label">Proxy Server:</label>
-                    <select class="proxy-select" id="proxySelect">
-                        <option value="corsproxy">CORS Proxy (corsproxy.io)</option>
-                        <option value="allorigins">AllOrigins (api.allorigins.win)</option>
-                        <option value="corsanywhere">CORS Anywhere</option>
-                        <option value="whatever">Whatever Origin</option>
-                        <option value="direct">Direct Request</option>
-                    </select>
-                </div>
-
-                <button class="btn" onclick="parseContent()">🚀 EXTRACT CONTENT</button>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="charCount">0</div>
-                        <div class="stat-label">Characters</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="status">Ready</div>
-                        <div class="stat-label">Status</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="proxyUsed">-</div>
-                        <div class="stat-label">Proxy Used</div>
-                    </div>
-                </div>
+        <div class="input-section">
+            <div class="url-input-container">
+                <input type="url" class="url-input" id="urlInput" 
+                       placeholder="https://example.com" required>
+                <button class="btn" id="extractBtn">Извлечь контент</button>
             </div>
-
-            <div class="output-section">
-                <label class="input-label">Extracted Content:</label>
-                <div class="result-area" id="resultArea">Enter a URL and click "Extract Content" to get started...</div>
+            <div class="tools">
+                <input type="text" class="url-input search-box" id="searchInput" 
+                       placeholder="Поиск по контенту...">
+                <button class="btn copy-btn" id="copyBtn">Копировать</button>
+                <button class="btn export-btn" id="exportBtn">Экспорт</button>
             </div>
         </div>
 
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">Fast Extraction</h3>
-                <p>Quick content parsing with multiple proxy servers</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3 class="feature-title">CORS Bypass</h3>
-                <p>Overcome cross-origin restrictions effortlessly</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔧</div>
-                <h3 class="feature-title">Multiple Proxies</h3>
-                <p>Switch between different proxy services</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Real-time Stats</h3>
-                <p>Live character count and status updates</p>
-            </div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Извлечение контента...</p>
         </div>
 
-        <div class="footer">
-            <p>CHIIP-SEEK System | Advanced Content Extraction</p>
+        <div class="tabs">
+            <div class="tab active" data-tab="content">Основной текст</div>
+            <div class="tab" data-tab="metadata">Мета-информация</div>
+            <div class="tab" data-tab="images">Изображения</div>
+            <div class="tab" data-tab="links">Ссылки</div>
+            <div class="tab" data-tab="stats">Статистика</div>
+        </div>
+
+        <div class="tab-content active" id="contentTab">
+            <div class="content-area" id="contentArea"></div>
+        </div>
+
+        <div class="tab-content" id="metadataTab">
+            <div class="content-area" id="metadataArea"></div>
+        </div>
+
+        <div class="tab-content" id="imagesTab">
+            <div class="image-grid" id="imagesGrid"></div>
+        </div>
+
+        <div class="tab-content" id="linksTab">
+            <div class="link-list" id="linksList"></div>
+        </div>
+
+        <div class="tab-content" id="statsTab">
+            <div class="stats-grid" id="statsGrid"></div>
+            <div class="content-area" id="detailedStats"></div>
+        </div>
+
+        <div class="history-section">
+            <h3>История запросов</h3>
+            <div id="historyList"></div>
         </div>
     </div>
 
+    <div class="notification" id="notification"></div>
+
     <script>
-        const urlInput = document.getElementById('urlInput');
-        const resultArea = document.getElementById('resultArea');
-        const charCount = document.getElementById('charCount');
-        const status = document.getElementById('status');
-        const proxyUsed = document.getElementById('proxyUsed');
-        const proxySelect = document.getElementById('proxySelect');
-
-        const proxies = {
-            corsproxy: (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-            allorigins: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-            corsanywhere: (url) => `https://cors-anywhere.herokuapp.com/${url}`,
-            whatever: (url) => `https://whateverorigin.org/get?url=${encodeURIComponent(url)}`,
-            direct: (url) => url
-        };
-
-        urlInput.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-        });
-
-        urlInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                parseContent();
-            }
-        });
-
-        async function parseContent() {
-            const url = urlInput.value.trim();
-            const selectedProxy = proxySelect.value;
-
-            if (!url) {
-                showResult('❌ Please enter a valid URL', 'error');
-                return;
+        class WebContentExtractor {
+            constructor() {
+                this.currentData = null;
+                this.history = JSON.parse(localStorage.getItem('extractionHistory')) || [];
+                this.init();
             }
 
-            if (!isValidUrl(url)) {
-                showResult('❌ Please enter a valid URL (include http:// or https://)', 'error');
-                return;
+            init() {
+                this.bindEvents();
+                this.renderHistory();
+                this.loadTheme();
             }
 
-            showResult('🔄 Initializing content extraction...\nBypassing CORS restrictions...', 'loading');
-            status.textContent = 'Processing';
-            proxyUsed.textContent = selectedProxy;
-
-            try {
-                const proxyUrl = proxies[selectedProxy](url);
-                
-                console.log(`Using proxy: ${selectedProxy}`);
-                console.log(`Target URL: ${proxyUrl}`);
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 25000);
-
-                const response = await fetch(proxyUrl, {
-                    signal: controller.signal,
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-                    }
+            bindEvents() {
+                document.getElementById('extractBtn').addEventListener('click', () => this.extractContent());
+                document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.extractContent();
                 });
+                document.getElementById('copyBtn').addEventListener('click', () => this.copyContent());
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportContent());
+                document.getElementById('searchInput').addEventListener('input', (e) => this.searchContent(e.target.value));
+                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
 
-                clearTimeout(timeoutId);
+                // Tab switching
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+                });
+            }
 
+            async extractContent() {
+                const url = document.getElementById('urlInput').value.trim();
+                
+                if (!this.isValidUrl(url)) {
+                    this.showNotification('Пожалуйста, введите корректный URL', 'error');
+                    return;
+                }
+
+                this.showLoading(true);
+                
+                try {
+                    const content = await this.fetchContent(url);
+                    this.currentData = this.parseContent(content, url);
+                    this.renderContent();
+                    this.addToHistory(url);
+                    this.showNotification('Контент успешно извлечен');
+                } catch (error) {
+                    this.showNotification('Ошибка при извлечении контента: ' + error.message, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async fetchContent(url) {
+                // Используем CORS proxy для обхода ограничений
+                const proxyUrl = 'https://api.allorigins.win/get?url=';
+                const response = await fetch(proxyUrl + encodeURIComponent(url));
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                let content;
                 
-                if (selectedProxy === 'whatever') {
-                    const data = await response.json();
-                    content = data.contents;
-                } else {
-                    content = await response.text();
-                }
-
-                if (!content) {
-                    throw new Error('No content received from the server');
-                }
-
-                const extractedText = extractTextContent(content);
-                
-                if (!extractedText) {
-                    throw new Error('No readable text content found');
-                }
-
-                const result = formatResult(url, selectedProxy, extractedText);
-                showResult(result, 'success');
-                status.textContent = 'Success';
-
-            } catch (error) {
-                const errorMessage = `❌ EXTRACTION FAILED\n\nError: ${error.message}\n\nTry:\n• Different proxy server\n• Check URL accessibility\n• Verify website is online`;
-                showResult(errorMessage, 'error');
-                status.textContent = 'Error';
+                const data = await response.json();
+                return data.contents;
             }
-        }
 
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
-
-        function extractTextContent(html) {
-            try {
+            parseContent(html, url) {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 
-                const unwanted = doc.querySelectorAll('script, style, nav, header, footer, iframe, link, meta, noscript');
-                unwanted.forEach(element => element.remove());
+                // Основной текст (очищенный от навигации и рекламы)
+                const mainContent = this.extractMainText(doc);
                 
-                let text = doc.body.textContent || html;
+                // Мета-данные
+                const metadata = this.extractMetadata(doc);
                 
-                text = text
-                    .replace(/\s+/g, ' ')
-                    .replace(/\n\s*\n/g, '\n')
-                    .replace(/[ \t]+/g, ' ')
-                    .trim();
+                // Изображения
+                const images = this.extractImages(doc, url);
                 
-                return text;
-            } catch (error) {
-                console.warn('HTML parsing failed, using raw content');
-                return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                // Ссылки
+                const links = this.extractLinks(doc, url);
+                
+                // Статистика
+                const stats = this.calculateStats(mainContent, images, links);
+
+                return {
+                    url,
+                    mainContent,
+                    metadata,
+                    images,
+                    links,
+                    stats,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            extractMainText(doc) {
+                // Удаляем ненужные элементы
+                const unwantedSelectors = [
+                    'nav', 'header', 'footer', 'aside', 'script', 'style',
+                    '.nav', '.header', '.footer', '.sidebar', '.advertisement',
+                    '.ad', '.banner', '.menu', '.navigation'
+                ];
+                
+                unwantedSelectors.forEach(selector => {
+                    doc.querySelectorAll(selector).forEach(el => el.remove());
+                });
+
+                // Получаем текст из основных содержательных элементов
+                const contentElements = doc.querySelectorAll('main, article, .content, .post, p, h1, h2, h3, h4, h5, h6');
+                let text = '';
+                
+                contentElements.forEach(el => {
+                    if (el.textContent.trim().length > 50) { // Минимальная длина для значимого контента
+                        text += el.textContent.trim() + '\n\n';
+                    }
+                });
+
+                return text || doc.body.textContent;
+            }
+
+            extractMetadata(doc) {
+                const metadata = {};
+                
+                // Основные мета-теги
+                metadata.title = doc.querySelector('title')?.textContent || '';
+                metadata.description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+                metadata.keywords = doc.querySelector('meta[name="keywords"]')?.getAttribute('content') || '';
+                metadata.author = doc.querySelector('meta[name="author"]')?.getAttribute('content') || '';
+                
+                // Open Graph
+                metadata.ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || '';
+                metadata.ogDescription = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || '';
+                metadata.ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+                
+                // Twitter Card
+                metadata.twitterTitle = doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content') || '';
+                metadata.twitterDescription = doc.querySelector('meta[name="twitter:description"]')?.getAttribute('content') || '';
+                
+                // Заголовки
+                metadata.headings = {
+                    h1: Array.from(doc.querySelectorAll('h1')).map(h => h.textContent.trim()),
+                    h2: Array.from(doc.querySelectorAll('h2')).map(h => h.textContent.trim()),
+                    h3: Array.from(doc.querySelectorAll('h3')).map(h => h.textContent.trim())
+                };
+
+                return metadata;
+            }
+
+            extractImages(doc, baseUrl) {
+                const images = [];
+                const imageElements = doc.querySelectorAll('img');
+                
+                imageElements.forEach(img => {
+                    const src = img.src.startsWith('http') ? img.src : new URL(img.src, baseUrl).href;
+                    images.push({
+                        src: src,
+                        alt: img.alt || 'Нет описания',
+                        title: img.title || '',
+                        width: img.width,
+                        height: img.height
+                    });
+                });
+                
+                return images;
+            }
+
+            extractLinks(doc, baseUrl) {
+                const links = [];
+                const linkElements = doc.querySelectorAll('a[href]');
+                
+                linkElements.forEach(link => {
+                    const href = link.href.startsWith('http') ? link.href : new URL(link.href, baseUrl).href;
+                    links.push({
+                        url: href,
+                        text: link.textContent.trim() || 'Без текста',
+                        title: link.title || ''
+                    });
+                });
+                
+                return links;
+            }
+
+            calculateStats(content, images, links) {
+                const words = content.trim() ? content.split(/\s+/).length : 0;
+                const characters = content.length;
+                const readingTime = Math.ceil(words / 200); // Средняя скорость чтения 200 слов в минуту
+                
+                return {
+                    words,
+                    characters,
+                    readingTime,
+                    images: images.length,
+                    links: links.length,
+                    paragraphs: content.split('\n\n').filter(p => p.trim()).length
+                };
+            }
+
+            renderContent() {
+                if (!this.currentData) return;
+
+                // Основной текст
+                document.getElementById('contentArea').textContent = this.currentData.mainContent;
+
+                // Мета-информация
+                this.renderMetadata();
+
+                // Изображения
+                this.renderImages();
+
+                // Ссылки
+                this.renderLinks();
+
+                // Статистика
+                this.renderStats();
+            }
+
+            renderMetadata() {
+                const metadata = this.currentData.metadata;
+                let html = '';
+                
+                for (const [key, value] of Object.entries(metadata)) {
+                    if (value && (typeof value !== 'object' || (Array.isArray(value) && value.length > 0))) {
+                        html += `<strong>${key}:</strong> ${JSON.stringify(value, null, 2)}\n\n`;
+                    }
+                }
+                
+                document.getElementById('metadataArea').textContent = html;
+            }
+
+            renderImages() {
+                const grid = document.getElementById('imagesGrid');
+                grid.innerHTML = '';
+                
+                this.currentData.images.forEach(img => {
+                    const imgElement = document.createElement('div');
+                    imgElement.className = 'image-item';
+                    imgElement.innerHTML = `
+                        <img src="${img.src}" alt="${img.alt}" loading="lazy">
+                        <p><strong>Alt:</strong> ${img.alt}</p>
+                        ${img.title ? `<p><strong>Title:</strong> ${img.title}</p>` : ''}
+                        ${img.width ? `<p><strong>Размер:</strong> ${img.width}x${img.height}</p>` : ''}
+                    `;
+                    grid.appendChild(imgElement);
+                });
+            }
+
+            renderLinks() {
+                const list = document.getElementById('linksList');
+                list.innerHTML = '';
+                
+                this.currentData.links.forEach(link => {
+                    const linkElement = document.createElement('div');
+                    linkElement.className = 'link-item';
+                    linkElement.innerHTML = `
+                        <strong>Текст:</strong> ${link.text}<br>
+                        <strong>URL:</strong> <a href="${link.url}" target="_blank">${link.url}</a>
+                        ${link.title ? `<br><strong>Title:</strong> ${link.title}` : ''}
+                    `;
+                    list.appendChild(linkElement);
+                });
+            }
+
+            renderStats() {
+                const stats = this.currentData.stats;
+                const grid = document.getElementById('statsGrid');
+                
+                grid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.words}</div>
+                        <div>Слов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.characters}</div>
+                        <div>Символов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.readingTime}</div>
+                        <div>Минут чтения</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.images}</div>
+                        <div>Изображений</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.links}</div>
+                        <div>Ссылок</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.paragraphs}</div>
+                        <div>Параграфов</div>
+                    </div>
+                `;
+            }
+
+            searchContent(query) {
+                const content = document.getElementById('contentArea').textContent;
+                if (!query.trim()) {
+                    document.getElementById('contentArea').textContent = this.currentData.mainContent;
+                    return;
+                }
+
+                const regex = new RegExp(query, 'gi');
+                const highlighted = this.currentData.mainContent.replace(regex, 
+                    match => `[[HIGHLIGHT]]${match}[[/HIGHLIGHT]]`
+                );
+                
+                document.getElementById('contentArea').innerHTML = highlighted
+                    .split('[[HIGHLIGHT]]')
+                    .map(part => {
+                        if (part.includes('[[/HIGHLIGHT]]')) {
+                            const [highlightedPart, rest] = part.split('[[/HIGHLIGHT]]');
+                            return `<mark>${highlightedPart}</mark>${rest}`;
+                        }
+                        return part;
+                    })
+                    .join('');
+            }
+
+            copyContent() {
+                const activeTab = document.querySelector('.tab.active').dataset.tab;
+                let content = '';
+                
+                switch (activeTab) {
+                    case 'content':
+                        content = document.getElementById('contentArea').textContent;
+                        break;
+                    case 'metadata':
+                        content = document.getElementById('metadataArea').textContent;
+                        break;
+                    case 'stats':
+                        content = JSON.stringify(this.currentData.stats, null, 2);
+                        break;
+                }
+                
+                navigator.clipboard.writeText(content).then(() => {
+                    this.showNotification('Содержимое скопировано в буфер обмена');
+                });
+            }
+
+            exportContent() {
+                if (!this.currentData) return;
+                
+                const format = prompt('Выберите формат экспорта (txt, json, html):', 'txt');
+                let content, mimeType, extension;
+                
+                switch (format) {
+                    case 'json':
+                        content = JSON.stringify(this.currentData, null, 2);
+                        mimeType = 'application/json';
+                        extension = 'json';
+                        break;
+                    case 'html':
+                        content = this.generateHtmlExport();
+                        mimeType = 'text/html';
+                        extension = 'html';
+                        break;
+                    default:
+                        content = this.generateTextExport();
+                        mimeType = 'text/plain';
+                        extension = 'txt';
+                }
+                
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `web-content-${new Date().getTime()}.${extension}`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            generateTextExport() {
+                return `
+Экспорт содержимого веб-страницы
+URL: ${this.currentData.url}
+Дата извлечения: ${new Date(this.currentData.timestamp).toLocaleString()}
+
+ОСНОВНОЙ ТЕКСТ:
+${this.currentData.mainContent}
+
+СТАТИСТИКА:
+- Слов: ${this.currentData.stats.words}
+- Символов: ${this.currentData.stats.characters}
+- Время чтения: ${this.currentData.stats.readingTime} мин.
+- Изображений: ${this.currentData.stats.images}
+- Ссылок: ${this.currentData.stats.links}
+                `.trim();
+            }
+
+            generateHtmlExport() {
+                return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Экспорт содержимого - ${this.currentData.url}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin-bottom: 30px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-item { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Экспорт содержимого веб-страницы</h1>
+    <div class="section">
+        <h2>Основная информация</h2>
+        <p><strong>URL:</strong> ${this.currentData.url}</p>
+        <p><strong>Дата извлечения:</strong> ${new Date(this.currentData.timestamp).toLocaleString()}</p>
+    </div>
+    <div class="section">
+        <h2>Основной текст</h2>
+        <pre>${this.currentData.mainContent}</pre>
+    </div>
+    <div class="section">
+        <h2>Статистика</h2>
+        <div class="stats">
+            <div class="stat-item">Слов: ${this.currentData.stats.words}</div>
+            <div class="stat-item">Символов: ${this.currentData.stats.characters}</div>
+            <div class="stat-item">Время чтения: ${this.currentData.stats.readingTime} мин.</div>
+            <div class="stat-item">Изображений: ${this.currentData.stats.images}</div>
+            <div class="stat-item">Ссылок: ${this.currentData.stats.links}</div>
+        </div>
+    </div>
+</body>
+</html>
+                `.trim();
+            }
+
+            addToHistory(url) {
+                const existingIndex = this.history.findIndex(item => item.url === url);
+                if (existingIndex !== -1) {
+                    this.history.splice(existingIndex, 1);
+                }
+                
+                this.history.unshift({
+                    url,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Сохраняем только последние 50 запросов
+                this.history = this.history.slice(0, 50);
+                localStorage.setItem('extractionHistory', JSON.stringify(this.history));
+                this.renderHistory();
+            }
+
+            renderHistory() {
+                const list = document.getElementById('historyList');
+                list.innerHTML = '';
+                
+                this.history.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <strong>${item.url}</strong>
+                        <br><small>${new Date(item.timestamp).toLocaleString()}</small>
+                    `;
+                    historyItem.addEventListener('click', () => {
+                        document.getElementById('urlInput').value = item.url;
+                        this.extractContent();
+                    });
+                    list.appendChild(historyItem);
+                });
+            }
+
+            switchTab(tabName) {
+                // Деактивируем все табы
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Активируем выбранный таб
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(`${tabName}Tab`).classList.add('active');
+            }
+
+            showLoading(show) {
+                document.getElementById('loading').style.display = show ? 'block' : 'none';
+                document.getElementById('extractBtn').disabled = show;
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                document.getElementById('themeToggle').textContent = isLight ? '🌞' : '🌙';
+            }
+
+            loadTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    document.getElementById('themeToggle').textContent = '🌞';
+                }
             }
         }
 
-        function formatResult(url, proxy, content) {
-            const maxLength = 20000;
-            const isTruncated = content.length > maxLength;
-            const displayContent = content.substring(0, maxLength);
-            
-            let result = `✅ CONTENT EXTRACTED SUCCESSFULLY\n\n`;
-            result += `📊 Source: ${url}\n`;
-            result += `🔧 Proxy: ${proxy}\n`;
-            result += `📏 Length: ${content.length.toLocaleString()} characters\n`;
-            result += `🕒 Timestamp: ${new Date().toLocaleString()}\n\n`;
-            result += `📄 EXTRACTED CONTENT:\n\n${displayContent}`;
-            
-            if (isTruncated) {
-                result += `\n\n... [CONTENT TRUNCATED - ${(content.length - maxLength).toLocaleString()} CHARACTERS OMITTED] ...`;
-            }
-            
-            return result;
-        }
-
-        function showResult(message, type) {
-            resultArea.textContent = message;
-            resultArea.className = `result-area ${type}`;
-        }
-
-        window.addEventListener('load', function() {
-            urlInput.focus();
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            new WebContentExtractor();
         });
-
-        urlInput.value = 'https://example.com';
-        charCount.textContent = urlInput.value.length;
     </script>
 </body>
 </html>
